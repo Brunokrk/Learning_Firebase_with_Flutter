@@ -6,23 +6,27 @@ class ListTileProduto extends StatelessWidget {
   final bool isComprado;
   final Function showModal;
   final Function iconClick;
-
+  final Function trailClick;
 
   const ListTileProduto({
     super.key,
     required this.produto,
     required this.isComprado,
-    required this.showModal, required this.iconClick,
+    required this.showModal,
+    required this.iconClick,
+    required this.trailClick,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: (){
-        showModal(model:produto);
+      onTap: () {
+        showModal(model: produto);
       },
       leading: IconButton(
-        onPressed: (){iconClick(produto);},
+        onPressed: () {
+          iconClick(produto);
+        },
         icon: Icon(
           (isComprado) ? Icons.shopping_basket : Icons.check,
         ),
@@ -36,6 +40,15 @@ class ListTileProduto extends StatelessWidget {
         (produto.price == null)
             ? "Clique para adicionar preço"
             : "R\$ ${produto.price!}",
+      ),
+      trailing: IconButton(
+        onPressed: (() {
+          trailClick(produto);
+        }),
+        icon: Icon(
+          Icons.delete_forever,
+          color: Colors.red,
+        ),
       ),
     );
   }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:listing_tasks_app/firestore_produtos/helpers/enum_order.dart';
@@ -23,12 +25,18 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
 
   OrdemProduto ordem = OrdemProduto.name;
   bool isDecrescent = false;
+  late StreamSubscription listener;
 
   @override
   void initState() {
-    refresh();
     setupListeners();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    listener.cancel();
+    super.dispose();
   }
 
   @override
@@ -40,22 +48,29 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
           PopupMenuButton(
             itemBuilder: (context) {
               return [
-                PopupMenuItem(child: Text("Ordenar por nome"), value: OrdemProduto.name,),
-                PopupMenuItem(child: Text("Ordenar por quantidade"), value: OrdemProduto.amount),
-                PopupMenuItem(child: Text("Ordenar por preço"), value: OrdemProduto.price,),
+                const PopupMenuItem(
+                  child: Text("Ordenar por nome"),
+                  value: OrdemProduto.name,
+                ),
+                const PopupMenuItem(
+                    child: Text("Ordenar por quantidade"),
+                    value: OrdemProduto.amount),
+                const PopupMenuItem(
+                  child: Text("Ordenar por preço"),
+                  value: OrdemProduto.price,
+                ),
               ];
             },
-            onSelected: (value){
+            onSelected: (value) {
               setState(() {
-                if( ordem == value){
+                if (ordem == value) {
                   isDecrescent = !isDecrescent;
-                }else{
+                } else {
                   ordem = value;
                   isDecrescent = false;
                 }
                 print(ordem);
                 print(isDecrescent);
-
               });
               refresh();
             },
@@ -77,9 +92,9 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Column(
-                children: const [
+                children: [
                   Text(
-                    "R\$${0}",
+                    "R\$${calcularPrecoPegos().toStringAsFixed(2)}",
                     style: TextStyle(fontSize: 42),
                   ),
                   Text(
@@ -109,6 +124,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                   produto: produto,
                   isComprado: false,
                   iconClick: alternarComprado,
+                    trailClick: removerProduto
                 );
               }),
             ),
@@ -132,6 +148,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                   produto: produto,
                   isComprado: true,
                   iconClick: alternarComprado,
+                  trailClick: removerProduto,
                 );
               }),
             ),
@@ -271,9 +288,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                           .doc(produto.id)
                           .set(produto.toMap());
 
-                      // Atualizar a lista
-                      refresh();
-
                       // Fechar o Modal
                       Navigator.pop(context);
                     },
@@ -288,13 +302,14 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     );
   }
 
-  refresh() async {
+  refresh({QuerySnapshot<Map<String, dynamic>>? snapshot}) async {
     List<Produto> temp = [];
-    QuerySnapshot<Map<String, dynamic>> snapshot = await firestore
+
+    snapshot ??= await firestore
         .collection("listins")
         .doc(widget.listin.id)
         .collection("produtos")
-    //.where("isComprado", isEqualTo: isComprado)
+        //.where("isComprado", isEqualTo: isComprado)
         .orderBy(ordem.name, descending: isDecrescent)
         .get();
 
@@ -306,22 +321,21 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   }
 
   filtrarProdutos(List<Produto> listaProdutos) async {
-   List<Produto> tempPlanejados= [];
-   List<Produto> tempPegos= [];
+    List<Produto> tempPlanejados = [];
+    List<Produto> tempPegos = [];
 
-   for(var produto in listaProdutos){
-     if(produto.isComprado){
-       tempPegos.add(produto);
-     }else{
-       tempPlanejados.add(produto);
-     }
-   }
+    for (var produto in listaProdutos) {
+      if (produto.isComprado) {
+        tempPegos.add(produto);
+      } else {
+        tempPlanejados.add(produto);
+      }
+    }
 
-   setState(() {
-     listaProdutosPegos = tempPegos;
-     listaProdutosPlanejados = tempPlanejados;
-   });
-
+    setState(() {
+      listaProdutosPegos = tempPegos;
+      listaProdutosPlanejados = tempPlanejados;
+    });
   }
 
   alternarComprado(Produto produto) async {
@@ -332,15 +346,79 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         .collection("produtos")
         .doc(produto.id)
         .update({"isComprado": produto.isComprado});
-
-    refresh();
   }
 
-  setupListeners(){
-    firestore.collection("listins").doc(widget.listin.id).collection("produtos").orderBy(ordem.name, descending: isDecrescent).snapshots().listen((snapshot){
-      print('Mudou');
-    });
+  setupListeners() {
+    listener = firestore
+        .collection("listins")
+        .doc(widget.listin.id)
+        .collection("produtos")
+        .orderBy(ordem.name, descending: isDecrescent)
+        .snapshots()
+        .listen((snapshot) {
+      if (snapshot.metadata.isFromCache) {
+        // Se os dados vêm do cache, opcionalmente não mostrar SnackBars
+        // ou tratar de forma diferenciada.
+      } else {
+        for (var change in snapshot.docChanges) {
+          // Usando switch para lidar com diferentes tipos de mudanças
+          switch (change.type) {
+            case DocumentChangeType.added:
+            // Verificamos se a mudança é devido a uma adição real
+              if (change.oldIndex == -1) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        "Produto adicionado: ${change.doc.data()?['name']}",
+                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
+                      backgroundColor: Colors.greenAccent,
+                    )
+                );
+              }
+              break;
+            case DocumentChangeType.modified:
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Produto alterado: ${change.doc.data()?['name']}",
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    backgroundColor: Colors.orangeAccent,
+                  )
+              );
+              break;
+            case DocumentChangeType.removed:
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Produto removido: ${change.doc.data()?['name']}",
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    backgroundColor: Colors.redAccent,
+                  )
+              );
+              break;
+          }
+        }
+      }
 
+      refresh(snapshot: snapshot);
+    });
+  }
+
+  removerProduto(Produto produto)async{
+    await firestore.collection("listins").doc(widget.listin.id).collection('produtos').doc(produto.id).delete();
+  }
+
+  calcularPrecoPegos(){
+    double total = 0;
+    for(Produto produto in listaProdutosPegos){
+      if(produto.amount != null && produto.price != null){
+        total += (produto.amount! * produto.price!);
+      }
+    }
+    return total;
   }
 
 }
