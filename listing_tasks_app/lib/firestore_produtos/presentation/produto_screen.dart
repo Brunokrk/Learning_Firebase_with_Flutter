@@ -27,6 +27,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   @override
   void initState() {
     refresh();
+    setupListeners();
     super.initState();
   }
 
@@ -334,4 +335,12 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
 
     refresh();
   }
+
+  setupListeners(){
+    firestore.collection("listins").doc(widget.listin.id).collection("produtos").orderBy(ordem.name, descending: isDecrescent).snapshots().listen((snapshot){
+      print('Mudou');
+    });
+
+  }
+
 }
