@@ -1,8 +1,8 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:listing_tasks_app/firestore_produtos/helpers/enum_order.dart';
+import 'package:listing_tasks_app/firestore_produtos/services/produto_service.dart';
 import 'package:uuid/uuid.dart';
 import '../../firestore/models/listin.dart';
 import '../model/produto.dart';
@@ -10,7 +10,6 @@ import 'widgets/list_tile_produto.dart';
 
 class ProdutoScreen extends StatefulWidget {
   final Listin listin;
-
   const ProdutoScreen({super.key, required this.listin});
 
   @override
@@ -22,6 +21,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   List<Produto> listaProdutosPegos = [];
 
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  ProdutoService produtoService = ProdutoService();
 
   OrdemProduto ordem = OrdemProduto.name;
   bool isDecrescent = false;
@@ -281,12 +281,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                       }
 
                       // Salvar no Firestore
-                      firestore
-                          .collection('listins')
-                          .doc(widget.listin.id)
-                          .collection("produtos")
-                          .doc(produto.id)
-                          .set(produto.toMap());
+                      produtoService.adicionarProduto(listinId: widget.listin.id, produto: produto);
 
                       // Fechar o Modal
                       Navigator.pop(context);
@@ -303,21 +298,8 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   }
 
   refresh({QuerySnapshot<Map<String, dynamic>>? snapshot}) async {
-    List<Produto> temp = [];
-
-    snapshot ??= await firestore
-        .collection("listins")
-        .doc(widget.listin.id)
-        .collection("produtos")
-        //.where("isComprado", isEqualTo: isComprado)
-        .orderBy(ordem.name, descending: isDecrescent)
-        .get();
-
-    for (var doc in snapshot.docs) {
-      Produto produto = Produto.fromMap(doc.data());
-      temp.add(produto);
-    }
-    filtrarProdutos(temp);
+    List<Produto> produtosLidos = await produtoService.lerProdutos(listinId: widget.listin.id, ordem: ordem, isDecrescent: isDecrescent);
+    filtrarProdutos(produtosLidos);
   }
 
   filtrarProdutos(List<Produto> listaProdutos) async {
@@ -340,75 +322,15 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
 
   alternarComprado(Produto produto) async {
     produto.isComprado = !produto.isComprado;
-    await firestore
-        .collection("listins")
-        .doc(widget.listin.id)
-        .collection("produtos")
-        .doc(produto.id)
-        .update({"isComprado": produto.isComprado});
+    await produtoService.alternarProduto(listinId: widget.listin.id, produto: produto);
   }
 
   setupListeners() {
-    listener = firestore
-        .collection("listins")
-        .doc(widget.listin.id)
-        .collection("produtos")
-        .orderBy(ordem.name, descending: isDecrescent)
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.metadata.isFromCache) {
-        // Se os dados vêm do cache, opcionalmente não mostrar SnackBars
-        // ou tratar de forma diferenciada.
-      } else {
-        for (var change in snapshot.docChanges) {
-          // Usando switch para lidar com diferentes tipos de mudanças
-          switch (change.type) {
-            case DocumentChangeType.added:
-            // Verificamos se a mudança é devido a uma adição real
-              if (change.oldIndex == -1) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        "Produto adicionado: ${change.doc.data()?['name']}",
-                        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                      ),
-                      backgroundColor: Colors.greenAccent,
-                    )
-                );
-              }
-              break;
-            case DocumentChangeType.modified:
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Produto alterado: ${change.doc.data()?['name']}",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                    backgroundColor: Colors.orangeAccent,
-                  )
-              );
-              break;
-            case DocumentChangeType.removed:
-              ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      "Produto removido: ${change.doc.data()?['name']}",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                    backgroundColor: Colors.redAccent,
-                  )
-              );
-              break;
-          }
-        }
-      }
-
-      refresh(snapshot: snapshot);
-    });
+    listener = produtoService.conectarStreamProdutos(refresh: refresh, listinId: widget.listin.id, ordem: ordem, isDecrescent: isDecrescent, context: context);
   }
 
   removerProduto(Produto produto)async{
-    await firestore.collection("listins").doc(widget.listin.id).collection('produtos').doc(produto.id).delete();
+    await produtoService.removerProduro(listinId: widget.listin.id, produto: produto);
   }
 
   calcularPrecoPegos(){
