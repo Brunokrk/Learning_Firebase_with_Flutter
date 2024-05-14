@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:listing_tasks_app/_core/my_colors.dart';
+import 'package:listing_tasks_app/authentication/screens/auth_screen.dart';
 import 'package:listing_tasks_app/firestore/presentation/home_screen.dart';
 import 'firebase_options.dart';
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)))
         ),
       ),
-      home: HomeScreen(),
+      home: AuthScreen(),
     );
   }
 }
