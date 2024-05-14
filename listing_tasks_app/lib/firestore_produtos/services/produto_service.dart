@@ -1,17 +1,19 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:listing_tasks_app/firestore_produtos/helpers/enum_order.dart';
 
 import '../model/produto.dart';
 
 class ProdutoService {
+  String uid = FirebaseAuth.instance.currentUser!.uid;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   adicionarProduto({required String listinId, required Produto produto}) {
     firestore
-        .collection('listins')
+        .collection(uid)
         .doc(listinId)
         .collection("produtos")
         .doc(produto.id)
@@ -25,7 +27,7 @@ class ProdutoService {
     List<Produto> temp = [];
 
     QuerySnapshot<Map<String, dynamic>> snapshot = await firestore
-        .collection("listins")
+        .collection(uid)
         .doc(listinId)
         .collection("produtos")
         //.where("isComprado", isEqualTo: isComprado)
@@ -43,7 +45,7 @@ class ProdutoService {
   Future<void> alternarProduto(
       {required String listinId, required Produto produto}) async {
     await firestore
-        .collection("listins")
+        .collection(uid)
         .doc(listinId)
         .collection("produtos")
         .doc(produto.id)
@@ -56,7 +58,7 @@ class ProdutoService {
           required OrdemProduto ordem,
           required bool isDecrescent, required BuildContext context}) {
     return firestore
-        .collection("listins")
+        .collection(uid)
         .doc(listinId)
         .collection("produtos")
         .orderBy(ordem.name, descending: isDecrescent)
@@ -110,6 +112,6 @@ class ProdutoService {
   }
 
   Future<void> removerProduro({required String listinId, required Produto produto})async{
-    return await firestore.collection("listins").doc(listinId).collection('produtos').doc(produto.id).delete();
+    return await firestore.collection(uid).doc(listinId).collection('produtos').doc(produto.id).delete();
 }
 }

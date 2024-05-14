@@ -33,7 +33,7 @@ class _AuthScreenState extends State<AuthScreen> {
           child: SingleChildScrollView(
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Color.fromRGBO(111, 45, 243, 1),
                 borderRadius: BorderRadius.circular(24),
               ),
               padding: const EdgeInsets.all(32),
@@ -44,8 +44,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Image.network(
-                      "https://github.com/ricarthlima/listin_assetws/raw/main/logo-icon.png",
-                      height: 64,
+                      "https://tse1.mm.bing.net/th/id/OIG4.pE2z6_8.yuUGZuCSzjzL?pid=ImgGn",
+                      height: 140,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -55,9 +55,9 @@ class _AuthScreenState extends State<AuthScreen> {
                             : "Vamos começar?",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ),
                     Text(
@@ -65,26 +65,32 @@ class _AuthScreenState extends State<AuthScreen> {
                           ? "Faça login para criar sua lista de compras."
                           : "Faça seu cadastro para começar a criar sua lista de compras com Listin.",
                       textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.white),
                     ),
                     TextFormField(
                       controller: _emailController,
-                      decoration: const InputDecoration(label: Text("E-mail")),
+                      style: TextStyle(color: Colors.white), // Adicionando estilo ao texto digitado
+                      decoration: const InputDecoration(
+                        label: Text("E-mail"),
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
                       validator: (value) {
-                        if (value == null || value == "") {
+                        if (value == null || value.isEmpty) {
                           return "O valor de e-mail deve ser preenchido";
                         }
-                        if (!value.contains("@") ||
-                            !value.contains(".") ||
-                            value.length < 4) {
+                        if (!value.contains("@") || !value.contains(".") || value.length < 4) {
                           return "O valor do e-mail deve ser válido";
                         }
                         return null;
                       },
                     ),
                     TextFormField(
+                      style: TextStyle(color: Colors.white),
                       controller: _senhaController,
                       obscureText: true,
-                      decoration: const InputDecoration(label: Text("Senha")),
+                      decoration: const InputDecoration(
+                          label: Text("Senha"),
+                          labelStyle: TextStyle(color: Colors.white)),
                       validator: (value) {
                         if (value == null || value.length < 4) {
                           return "Insira uma senha válida.";
@@ -98,7 +104,10 @@ class _AuthScreenState extends State<AuthScreen> {
                         onPressed: () {
                           esqueciMinhaSenhaClicado();
                         },
-                        child: Text("Esqueci minha senha."),
+                        child: Text(
+                          "Esqueci minha senha.",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                     Padding(
@@ -108,11 +117,12 @@ class _AuthScreenState extends State<AuthScreen> {
                           child: Column(
                             children: [
                               TextFormField(
+                                style: TextStyle(color: Colors.white),
                                 controller: _confirmaController,
                                 obscureText: true,
                                 decoration: const InputDecoration(
-                                  label: Text("Confirme a senha"),
-                                ),
+                                    label: Text("Confirme a senha"),
+                                    labelStyle: TextStyle(color: Colors.white)),
                                 validator: (value) {
                                   if (value == null || value.length < 4) {
                                     return "Insira uma confirmação de senha válida.";
@@ -124,10 +134,11 @@ class _AuthScreenState extends State<AuthScreen> {
                                 },
                               ),
                               TextFormField(
+                                style: TextStyle(color: Colors.white),
                                 controller: _nomeController,
                                 decoration: const InputDecoration(
-                                  label: Text("Nome"),
-                                ),
+                                    label: Text("Nome"),
+                                    labelStyle: TextStyle(color: Colors.white)),
                                 validator: (value) {
                                   if (value == null || value.length < 3) {
                                     return "Insira um nome maior.";
@@ -159,7 +170,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             : "Já tem uma conta?\nClique aqui para entrar",
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          color: MyColors.blue,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -190,12 +201,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   _entrarUsuario({required String email, required String senha}) {
     authService.entrarUsuario(email: email, senha: senha).then((erro) {
-      if (erro == null) {
-        showSnackBar(
-            context: context,
-            mensagem: "Contra logada com sucesso",
-            isErro: false);
-      } else {
+      if (erro != null) {
         showSnackBar(context: context, mensagem: erro);
       }
     });
@@ -212,12 +218,7 @@ class _AuthScreenState extends State<AuthScreen> {
       nome: nome,
     )
         .then((erro) {
-      if (erro == null) {
-        showSnackBar(
-            context: context,
-            mensagem: "Contra criada com sucesso",
-            isErro: false);
-      } else {
+      if (erro != null) {
         showSnackBar(context: context, mensagem: erro);
       }
     });
