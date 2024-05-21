@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:listing_tasks_app/authentication/component/show_snackbar.dart';
+import 'package:listing_tasks_app/storage/services/storage_service.dart';
 
 class StorageScreen extends StatefulWidget {
   const StorageScreen({super.key});
@@ -10,6 +15,7 @@ class StorageScreen extends StatefulWidget {
 class _StorageScreenState extends State<StorageScreen> {
   String? urlPhoto;
   List<String> listFiles = [];
+  final StorageService _storageService = StorageService();
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +49,7 @@ class _StorageScreenState extends State<StorageScreen> {
           children: [
             (urlPhoto != null)
                 ? Image.network(urlPhoto!)
-                : CircleAvatar(
+                : const CircleAvatar(
                     radius: 64,
                     child: Icon(Icons.person),
                   ),
@@ -67,7 +73,28 @@ class _StorageScreenState extends State<StorageScreen> {
     );
   }
 
-  uploadImage() {}
+  uploadImage() {
+    ImagePicker imagePicker = ImagePicker();
+    imagePicker.pickImage(source: ImageSource.gallery, maxHeight: 2000, maxWidth: 2000, imageQuality: 50).then((XFile? image){
+      if(image!=null){
+        _storageService.upload(file: File(image.path), fileName: "user_photo").then((String urlDownload) {
+          setState(() {
+            urlPhoto = urlDownload;
+          });
+        });
+        
+      }else{
+        showSnackBar(context: context, mensagem: "Nenhuma imagem selecionada");
+      }
 
-  reload() {}
+    });
+  }
+
+  reload() {
+    _storageService.getDownloadUrlByFileName(fileName: "user_photo").then((urlDownload){
+      setState(() {
+        urlPhoto = urlDownload;
+      });
+    });
+  }
 }
