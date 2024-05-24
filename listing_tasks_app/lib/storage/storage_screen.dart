@@ -49,8 +49,13 @@ class _StorageScreenState extends State<StorageScreen> {
           children: [
             (urlPhoto != null)
                 ? ClipRRect(
-                borderRadius: BorderRadius.circular(64),
-                child: Image.network(urlPhoto!, height: 128, width: 128, fit: BoxFit.cover,))
+                    borderRadius: BorderRadius.circular(64),
+                    child: Image.network(
+                      urlPhoto!,
+                      height: 128,
+                      width: 128,
+                      fit: BoxFit.cover,
+                    ))
                 : const CircleAvatar(
                     radius: 64,
                     child: Icon(Icons.person),
@@ -65,10 +70,31 @@ class _StorageScreenState extends State<StorageScreen> {
               "Histórico de Imagens",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
             ),
-            Column(children: List.generate(listFiles.length, (index){
-              String url = listFiles[index];
-              return Image.network(url);
-            }),)
+            const SizedBox(
+              height: 16,
+            ),
+            Column(
+              children: List.generate(
+                listFiles.length,
+                (index) {
+                  String url = listFiles[index];
+                  return ListTile(
+                    leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.network(
+                        url,
+                        height: 48,
+                        width: 48,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    title: Text("Nome da imagem"),
+                    subtitle: Text("Tamanho da Imagem"),
+                    trailing: IconButton(icon:Icon(Icons.delete, color: Colors.red,), onPressed: (){},)
+                  );
+                },
+              ),
+            )
           ],
         ),
       ),
@@ -77,25 +103,38 @@ class _StorageScreenState extends State<StorageScreen> {
 
   uploadImage() {
     ImagePicker imagePicker = ImagePicker();
-    imagePicker.pickImage(source: ImageSource.gallery, maxHeight: 2000, maxWidth: 2000, imageQuality: 50).then((XFile? image){
-      if(image!=null){
-        _storageService.upload(file: File(image.path), fileName: "user_photo").then((String urlDownload) {
+    imagePicker
+        .pickImage(
+            source: ImageSource.gallery,
+            maxHeight: 2000,
+            maxWidth: 2000,
+            imageQuality: 50)
+        .then((XFile? image) {
+      if (image != null) {
+        _storageService
+            .upload(file: File(image.path), fileName: DateTime.now().toString())
+            .then((String urlDownload) {
           setState(() {
             urlPhoto = urlDownload;
+            reload();
           });
         });
-        
-      }else{
+      } else {
         showSnackBar(context: context, mensagem: "Nenhuma imagem selecionada");
       }
-
     });
   }
 
   reload() {
-    _storageService.getDownloadUrlByFileName(fileName: "user_photo").then((urlDownload){
+    // _storageService.getDownloadUrlByFileName(fileName: "user_photo").then((urlDownload){
+    //   setState(() {
+    //     urlPhoto = urlDownload;
+    //   });
+    // });
+
+    _storageService.listAllFiles().then((List<String> listUrlsDownload) {
       setState(() {
-        urlPhoto = urlDownload;
+        listFiles = listUrlsDownload;
       });
     });
   }
