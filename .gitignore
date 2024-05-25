@@ -9,6 +9,7 @@
 ### Firebase Patch ###
 .runtimeconfig.json
 .firebase/
+listing_tasks_app/lib/firebase_options.dart
 
 ### Flutter ###
 # Flutter/Dart/Pub related
