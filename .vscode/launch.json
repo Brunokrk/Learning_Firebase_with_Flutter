@@ -1,0 +1,28 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "listing_tasks_app",
+            "cwd": "listing_tasks_app",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "listing_tasks_app (profile mode)",
+            "cwd": "listing_tasks_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "listing_tasks_app (release mode)",
+            "cwd": "listing_tasks_app",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
