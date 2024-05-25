@@ -37,8 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           children: [
             UserAccountsDrawerHeader(
-                currentAccountPicture: const CircleAvatar(
-                  backgroundColor: Colors.white,
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: (widget.user.photoURL!= null)? NetworkImage(widget.user.photoURL!):null,
                 ),
                 accountName: Text((widget.user.displayName != null)
                     ? widget.user.displayName!

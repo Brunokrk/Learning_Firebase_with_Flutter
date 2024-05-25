@@ -76,36 +76,40 @@ class _StorageScreenState extends State<StorageScreen> {
             const SizedBox(
               height: 16,
             ),
-            Column(
-              children: List.generate(
-                listFiles.length,
-                (index) {
-                  ImageCustomInfo imageInfo = listFiles[index];
-                  return ListTile(
-                      onTap: () {
-                        selectImage(imageInfo);
-                      },
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
-                        child: Image.network(
-                          imageInfo.urlDownload,
-                          height: 48,
-                          width: 48,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      title: Text(imageInfo.name),
-                      subtitle: Text(imageInfo.size),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                        onPressed: () {
-                          deleteImage(imageInfo);
-                        },
-                      ));
-                },
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: List.generate(
+                    listFiles.length,
+                    (index) {
+                      ImageCustomInfo imageInfo = listFiles[index];
+                      return ListTile(
+                          onTap: () {
+                            selectImage(imageInfo);
+                          },
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(24),
+                            child: Image.network(
+                              imageInfo.urlDownload,
+                              height: 48,
+                              width: 48,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          title: Text(imageInfo.name),
+                          subtitle: Text(imageInfo.size),
+                          trailing: IconButton(
+                            icon: const Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              deleteImage(imageInfo);
+                            },
+                          ));
+                    },
+                  ),
+                ),
               ),
             )
           ],
