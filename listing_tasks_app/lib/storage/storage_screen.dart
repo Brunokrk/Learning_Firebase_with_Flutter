@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:listing_tasks_app/authentication/component/show_snackbar.dart';
+import 'package:listing_tasks_app/storage/models/image_custom_info.dart';
 import 'package:listing_tasks_app/storage/services/storage_service.dart';
 
 class StorageScreen extends StatefulWidget {
@@ -14,8 +16,9 @@ class StorageScreen extends StatefulWidget {
 
 class _StorageScreenState extends State<StorageScreen> {
   String? urlPhoto;
-  List<String> listFiles = [];
+  List<ImageCustomInfo> listFiles = [];
   final StorageService _storageService = StorageService();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -77,21 +80,31 @@ class _StorageScreenState extends State<StorageScreen> {
               children: List.generate(
                 listFiles.length,
                 (index) {
-                  String url = listFiles[index];
+                  ImageCustomInfo imageInfo = listFiles[index];
                   return ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.network(
-                        url,
-                        height: 48,
-                        width: 48,
-                        fit: BoxFit.cover,
+                      onTap: () {
+                        selectImage(imageInfo);
+                      },
+                      leading: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.network(
+                          imageInfo.urlDownload,
+                          height: 48,
+                          width: 48,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                    title: Text("Nome da imagem"),
-                    subtitle: Text("Tamanho da Imagem"),
-                    trailing: IconButton(icon:Icon(Icons.delete, color: Colors.red,), onPressed: (){},)
-                  );
+                      title: Text(imageInfo.name),
+                      subtitle: Text(imageInfo.size),
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          deleteImage(imageInfo);
+                        },
+                      ));
                 },
               ),
             )
@@ -126,16 +139,30 @@ class _StorageScreenState extends State<StorageScreen> {
   }
 
   reload() {
-    // _storageService.getDownloadUrlByFileName(fileName: "user_photo").then((urlDownload){
-    //   setState(() {
-    //     urlPhoto = urlDownload;
-    //   });
-    // });
+    setState(() {
+      urlPhoto = _firebaseAuth.currentUser!.photoURL;
+    });
 
-    _storageService.listAllFiles().then((List<String> listUrlsDownload) {
+    _storageService.listAllFiles().then((List<ImageCustomInfo> listFilesInfo) {
       setState(() {
-        listFiles = listUrlsDownload;
+        listFiles = listFilesInfo;
       });
+    });
+  }
+
+  selectImage(ImageCustomInfo imageInfo) {
+    _firebaseAuth.currentUser!.updatePhotoURL(imageInfo.urlDownload);
+    setState(() {
+      urlPhoto = imageInfo.urlDownload;
+    });
+  }
+
+  deleteImage(ImageCustomInfo imageInfo) {
+    _storageService.deleteByReference(imageInfo: imageInfo).then((value) {
+      if (urlPhoto == imageInfo.urlDownload) {
+        urlPhoto = null;
+      }
+      reload();
     });
   }
 }

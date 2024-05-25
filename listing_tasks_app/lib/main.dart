@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)))
         ),
       ),
-      home: StorageScreen(),//RoteadorTelas(),
+      home:const RoteadorTelas(),
     );
   }
 }
