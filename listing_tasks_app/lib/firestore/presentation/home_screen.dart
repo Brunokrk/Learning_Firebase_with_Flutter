@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
           // Formulário com Título, Campo e Botões
           child: ListView(
             children: [
-              Text(title, style: Theme.of(context).textTheme.headline5),
+              Text(title, style: Theme.of(context).textTheme.headlineLarge),
               TextFormField(
                 controller: nameController,
                 decoration:

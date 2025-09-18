@@ -1,0 +1,1 @@
+/Users/brunopires/Documents/development/github/Learning_Firebase_with_Flutter/listing_tasks_app/build/app/intermediates/cxx/Debug/1q484t4b/obj/x86

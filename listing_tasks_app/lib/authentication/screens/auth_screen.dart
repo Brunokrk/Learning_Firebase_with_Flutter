@@ -43,8 +43,8 @@ class _AuthScreenState extends State<AuthScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Image.network(
-                      "https://tse1.mm.bing.net/th/id/OIG4.pE2z6_8.yuUGZuCSzjzL?pid=ImgGn",
+                    Image.asset(
+                      "assets/images/2721299.png",
                       height: 140,
                     ),
                     Padding(

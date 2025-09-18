@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/brunopires/Developer/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/brunopires/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/brunopires/Documents/development/github/Learning_Firebase_with_Flutter/listing_tasks_app/android/app/.cxx/Debug/1q484t4b/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/brunopires/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/brunopires/Documents/development/github/Learning_Firebase_with_Flutter/listing_tasks_app/android/app/.cxx/Debug/1q484t4b/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

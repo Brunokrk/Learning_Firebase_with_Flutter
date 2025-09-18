@@ -3,6 +3,7 @@
 *.log
 *.pyc
 *.swp
+*.swo
 .DS_Store
 .atom/
 .buildlog/
@@ -41,3 +42,186 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android related
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+local.properties
+android/key.properties
+android/app/google-services.json
+android/app/google-services-debug.json
+android/app/google-services-release.json
+
+# iOS related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbxuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.sconsign.dblite
+**/ios/**/.tags*
+**/ios/**/.vagrant/
+**/ios/**/DerivedData/
+**/ios/**/Icon?
+**/ios/**/Pods/
+**/ios/**/.symlinks/
+**/ios/**/profile
+**/ios/**/xcuserdata
+**/ios/.generated/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+ios/GoogleService-Info.plist
+ios/GoogleService-Info-Debug.plist
+ios/GoogleService-Info-Release.plist
+
+# macOS related
+**/macos/Flutter/GeneratedPluginRegistrant.swift
+**/macos/Flutter/ephemeral/
+
+# Web related
+/web/
+
+# Windows related
+**/windows/flutter/generated_plugin_registrant.cc
+**/windows/flutter/generated_plugin_registrant.h
+**/windows/flutter/ephemeral/
+
+# Linux related
+**/linux/flutter/generated_plugin_registrant.cc
+**/linux/flutter/generated_plugin_registrant.h
+**/linux/flutter/ephemeral/
+
+# Firebase related
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+.firebaserc
+firebase.json
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Coverage
+coverage/
+
+# Test related
+test_driver/
+
+# FVM Version Cache
+.fvm/
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# nyc test coverage
+.nyc_output/
+
+# Grunt intermediate storage
+.grunt/
+
+# Bower dependency directory
+bower_components/
+
+# node_modules (if using any JS tools)
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# IDE files
+*.sublime-project
+*.sublime-workspace
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Keys and certificates
+*.pem
+*.key
+*.crt
+*.p12
+*.keystore

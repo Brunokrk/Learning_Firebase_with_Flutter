@@ -1,11 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:listing_tasks_app/_core/my_colors.dart';
 import 'package:listing_tasks_app/authentication/screens/auth_screen.dart';
 import 'package:listing_tasks_app/firestore/presentation/home_screen.dart';
-import 'package:listing_tasks_app/storage/storage_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -16,8 +13,6 @@ void main() async {
   );
 
   runApp(const MyApp());
-
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
 }
 
 class MyApp extends StatelessWidget {
